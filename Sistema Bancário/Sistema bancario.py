@@ -1,5 +1,6 @@
-usuarios= []
-from funcoes import deposito, saque, extrato, sair, cadastro_usuario, busca_cpf, mostrar_logs
+from funcoes import deposito, saque, extrato, sair, cadastro_usuario, busca_cpf, mostrar_logs, salvar_usuarios, carregar_usuarios
+
+usuarios = carregar_usuarios()
 
 print("Bem vindo ao nosso Banco!")
 while True:
@@ -7,19 +8,23 @@ while True:
     # Cadastro de usuario
 
     usuario = {
-        "nome": "sidnei", "data_nascimento": "", "endereco": "",
-          "cpf": "54923258845", "saldo": 0.0, "depositos": 0, "saques": 0, "historico": []
+        "nome": "", "data_nascimento": "", "endereco": "",
+          "cpf": "", "saldo": 0.0, "depositos": 0, "saques": 0, "historico": []
     }
     cadastro = input("Voce ja possui uma conta? (s/n): ")
 
     if cadastro == "n":
        cadastro_usuario(usuarios)
+       salvar_usuarios(usuarios)
     
     # Busca de usuario
 
     else:
-        busca_cpf(usuarios)
-
+        usuario = busca_cpf(usuarios)
+        if usuario is None:
+            print('Tente novamente ou cadastre-se.')
+            continue
+        
     executando = True
     while executando:      
 

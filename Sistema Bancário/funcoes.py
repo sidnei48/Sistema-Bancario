@@ -73,15 +73,14 @@ def cadastro_usuario(usuarios):
 # Busca de usuario pelo CPF
 
 @registrar_acao
-def busca_cpf(usuario):
-    busca = input("Digite seu CPF para acessar sua conta:")
+def busca_cpf(usuarios):
+    cpf = input("Digite seu CPF: ")
     for usuario in usuarios:
-        if usuario["cpf"] == busca:
-            print("Bem vindo de volta,", usuario["nome"])
-            return usuario
-        else:
-            print('CPF nao encontrado. Por favor, crie uma conta.')
-            return None
+        if usuario["cpf"] == cpf:
+            print("Usuário encontrado!")
+            return usuario  # Retorna o dicionário do usuário
+    print("CPF não encontrado!")
+    return None
         
 # Retorna logs
 
@@ -110,3 +109,17 @@ def filtrar_logs(acao=None):
         if acao is None or acao.lower() in log.lower():
             yield log
         
+import json
+
+ARQUIVO_USUARIOS = "usuarios.json"
+
+def salvar_usuarios(usuarios):
+    with open(ARQUIVO_USUARIOS, "w") as arquivo:
+        json.dump(usuarios, arquivo)
+
+def carregar_usuarios():
+    try:
+        with open(ARQUIVO_USUARIOS, "r") as arquivo:
+            return json.load(arquivo)
+    except FileNotFoundError:
+        return []
