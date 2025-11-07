@@ -1,5 +1,6 @@
 from funcoes import deposito, saque, extrato, sair, cadastro_usuario, busca_cpf, mostrar_logs, salvar_usuarios, carregar_usuarios
 
+
 usuarios = carregar_usuarios()
 
 print("Bem vindo ao nosso Banco!")
@@ -44,13 +45,16 @@ while True:
         # Deposito
 
         if operacao == "1":
-            deposito(usuario)
+            valor = float(input("Digite o valor que deseja depositar: "))
+            deposito(usuario, valor)
+            
             
 
         # Saque
 
         elif operacao == "2":
-            saque(usuario)
+            valor = float(input("Digite o valor que deseja sacar: "))
+            saque(usuario, valor)
         
         # Extrato
 

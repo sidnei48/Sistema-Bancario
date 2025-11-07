@@ -1,0 +1,6 @@
+07/11/25 15:58:47 | extrato | usuario: Usuario teste
+07/11/25 15:58:56 | deposito | usuario: Usuario teste | valor: R$ 10000.00
+07/11/25 15:58:59 | deposito | usuario: Usuario teste | valor: R$ 500.00
+07/11/25 15:59:02 | saque | usuario: Usuario teste | valor: R$ 500.00
+07/11/25 15:59:04 | saque | usuario: Usuario teste | valor: R$ 250.00
+07/11/25 15:59:06 | extrato | usuario: Usuario teste

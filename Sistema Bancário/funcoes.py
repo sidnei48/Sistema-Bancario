@@ -1,24 +1,27 @@
-from decorador import registrar_acao, logs
-
+from decorador import registrar_ação, registro, atualizar_usuarios  , logs
+import csv
 usuarios = []
 
 # Depositos
-@registrar_acao
-def deposito(usuario):
-    valor_deposito = float(input("Digite o valor que deseja depositar: "))
+@atualizar_usuarios
+@registrar_ação
+def deposito(usuario, valor_deposito):
     if valor_deposito > 0:
         usuario["saldo"] += valor_deposito
         usuario["historico"].append(f"Deposito: +R$ {valor_deposito:.2f}")
         usuario["depositos"] += 1
         print(f'Deposito realizado com sucesso! Saldo atual: R$ {usuario["saldo"]:.2f}')
+
+        salvar_usuarios([usuario])
+
+        return usuario["saldo"]
     else:
         print("Valor invalido. O valor do deposito deve ser maior que zero.")
 
 #Saques
-
-@registrar_acao
-def saque(usuario):
-    valor_saque = float(input("Digite o valor que deseja sacar: "))
+@atualizar_usuarios
+@registrar_ação
+def saque(usuario, valor_saque):
     if valor_saque > usuario["saldo"]:
         print("Saldo insuficiente para realizar o saque.")
     else:
@@ -28,9 +31,12 @@ def saque(usuario):
         print(f"Saque realizado de {valor_saque} com sucesso!")
         print(f"Saldo atual: {usuario['saldo']}")
 
-# Extrato
+        salvar_usuarios([usuario])
+        
+        return usuario["saldo"]
 
-@registrar_acao
+# Extrato
+@registro
 def extrato(usuario):
     print('\n====Extrato====')
     for mov in usuario["historico"]:
@@ -47,8 +53,7 @@ def sair():
     return False
 
 # cadastro de usuario
-
-@registrar_acao
+@registro
 def cadastro_usuario(usuarios):
     usuario = {
         "nome": "", "data_nascimento": "", "endereco": "",
@@ -71,8 +76,6 @@ def cadastro_usuario(usuarios):
     print("Conta criada com sucesso!")
 
 # Busca de usuario pelo CPF
-
-@registrar_acao
 def busca_cpf(usuarios):
     cpf = input("Digite seu CPF: ")
     for usuario in usuarios:
@@ -83,7 +86,6 @@ def busca_cpf(usuarios):
     return None
         
 # Retorna logs
-
 def mostrar_logs():
     print("\n==== Ver logs ====")
     print('Digite a ação que deseja filtrar (ex: deposito, saque, cadastro)')
@@ -103,23 +105,52 @@ def mostrar_logs():
         print("Nenhum log encontrado para o filtro especificado.")
 
 # filtrar logs
-
 def filtrar_logs(acao=None):
     for log in logs:
         if acao is None or acao.lower() in log.lower():
             yield log
         
-import json
-
-ARQUIVO_USUARIOS = "usuarios.json"
+# Funções para registrar e carregar usuários em um arquivo 
+CONTAS = "usuarios.csv"
 
 def salvar_usuarios(usuarios):
-    with open(ARQUIVO_USUARIOS, "w") as arquivo:
-        json.dump(usuarios, arquivo)
+
+    try:
+        with open(CONTAS, "w", encoding='utf-8', newline = '') as arquivo:
+            dados = csv.writer(arquivo)
+            for usuario in usuarios:
+                dados.writerow([usuario["nome"],
+                    usuario["data_nascimento"],
+                    usuario["endereco"],
+                    usuario["cpf"], 
+                    usuario["saldo"],
+                    usuario["depositos"],
+                    usuario["saques"]
+                    ])
+
+    except IOError:
+            print("Erro ao salvar os dados dos usuários.")
 
 def carregar_usuarios():
     try:
-        with open(ARQUIVO_USUARIOS, "r") as arquivo:
-            return json.load(arquivo)
+        with open(CONTAS, "r") as arquivo:
+            dados = csv.reader(arquivo)
+            usuarios = []
+            for linha in dados:
+                if not linha:
+                    continue
+
+                usuario = {
+                    "nome": linha[0],
+                    "data_nascimento": linha[1],
+                    "endereco": linha[2],
+                    "cpf": linha[3],
+                    "saldo": float(linha[4]),
+                    "depositos": int(linha[5]),
+                    "saques": int(linha[6]),
+                    "historico": []
+                }
+                usuarios.append(usuario)
+            return usuarios
     except FileNotFoundError:
         return []
