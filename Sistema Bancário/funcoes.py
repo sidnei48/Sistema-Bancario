@@ -1,8 +1,10 @@
-from decorador import registrar_ação, registro, atualizar_usuarios  , logs
+from decorador import registrar_ação, registro, atualizar_usuarios, logs
 import csv
+
 usuarios = []
 
-# Depositos
+
+# Deposito
 @atualizar_usuarios
 @registrar_ação
 def deposito(usuario, valor_deposito):
@@ -18,7 +20,8 @@ def deposito(usuario, valor_deposito):
     else:
         print("Valor invalido. O valor do deposito deve ser maior que zero.")
 
-#Saques
+
+# Saques
 @atualizar_usuarios
 @registrar_ação
 def saque(usuario, valor_saque):
@@ -32,34 +35,43 @@ def saque(usuario, valor_saque):
         print(f"Saldo atual: {usuario['saldo']}")
 
         salvar_usuarios([usuario])
-        
+
         return usuario["saldo"]
+
 
 # Extrato
 @registro
 def extrato(usuario):
-    print('\n====Extrato====')
+    print("\n====Extrato====")
     for mov in usuario["historico"]:
         print(mov)
     print(f'Saldo atual: {usuario["saldo"]}')
     print(f'Depósitos realizado: {usuario["depositos"]}')
     print(f'Saques realizados: {usuario["saques"]}')
-    print('====Fim do Extrato====\n')
+    print("====Fim do Extrato====\n")
+
 
 # sair
 def sair():
 
-    print('Obrigado por usar nosso banco. Ate mais!')
+    print("Obrigado por usar nosso banco. Ate mais!")
     return False
+
 
 # cadastro de usuario
 @registro
 def cadastro_usuario(usuarios):
     usuario = {
-        "nome": "", "data_nascimento": "", "endereco": "",
-          "cpf": "", "saldo": 0.0, "depositos": 0, "saques": 0, "historico": []
+        "nome": "",
+        "data_nascimento": "",
+        "endereco": "",
+        "cpf": "",
+        "saldo": 0.0,
+        "depositos": 0,
+        "saques": 0,
+        "historico": [],
     }
-    
+
     print("Por favor, preencha os dados abaixo para criar sua conta.")
 
     usuario["nome"] = input("Digite seu nome completo: ")
@@ -75,6 +87,7 @@ def cadastro_usuario(usuarios):
 
     print("Conta criada com sucesso!")
 
+
 # Busca de usuario pelo CPF
 def busca_cpf(usuarios):
     cpf = input("Digite seu CPF: ")
@@ -84,18 +97,18 @@ def busca_cpf(usuarios):
             return usuario  # Retorna o dicionário do usuário
     print("CPF não encontrado!")
     return None
-        
+
+
 # Retorna logs
 def mostrar_logs():
     print("\n==== Ver logs ====")
-    print('Digite a ação que deseja filtrar (ex: deposito, saque, cadastro)')
-    print('Ou pressione Enter para mostrar todos os logs.')
+    print("Digite a ação que deseja filtrar (ex: deposito, saque, cadastro)")
+    print("Ou pressione Enter para mostrar todos os logs.")
 
     filtro = input("Filtro:").strip()
 
     print("\n==== Logs encontrados ====")
     encontrou = False
-
 
     for log in filtrar_logs(filtro if filtro else None):
         print(log)
@@ -104,32 +117,39 @@ def mostrar_logs():
     if not encontrou:
         print("Nenhum log encontrado para o filtro especificado.")
 
+
 # filtrar logs
 def filtrar_logs(acao=None):
     for log in logs:
         if acao is None or acao.lower() in log.lower():
             yield log
-        
-# Funções para registrar e carregar usuários em um arquivo 
+
+
+# Funções para registrar e carregar usuários em um arquivo
 CONTAS = "usuarios.csv"
+
 
 def salvar_usuarios(usuarios):
 
     try:
-        with open(CONTAS, "w", encoding='utf-8', newline = '') as arquivo:
+        with open(CONTAS, "w", encoding="utf-8", newline="") as arquivo:
             dados = csv.writer(arquivo)
             for usuario in usuarios:
-                dados.writerow([usuario["nome"],
-                    usuario["data_nascimento"],
-                    usuario["endereco"],
-                    usuario["cpf"], 
-                    usuario["saldo"],
-                    usuario["depositos"],
-                    usuario["saques"]
-                    ])
+                dados.writerow(
+                    [
+                        usuario["nome"],
+                        usuario["data_nascimento"],
+                        usuario["endereco"],
+                        usuario["cpf"],
+                        usuario["saldo"],
+                        usuario["depositos"],
+                        usuario["saques"],
+                    ]
+                )
 
     except IOError:
-            print("Erro ao salvar os dados dos usuários.")
+        print("Erro ao salvar os dados dos usuários.")
+
 
 def carregar_usuarios():
     try:
@@ -148,7 +168,7 @@ def carregar_usuarios():
                     "saldo": float(linha[4]),
                     "depositos": int(linha[5]),
                     "saques": int(linha[6]),
-                    "historico": []
+                    "historico": [],
                 }
                 usuarios.append(usuario)
             return usuarios
