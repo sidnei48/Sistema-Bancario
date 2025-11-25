@@ -49,31 +49,10 @@ def registrar_ação(func):
             valor = 0.0
 
         agora = datetime.now().strftime("%d/%m/%y %H:%M:%S")
-        log_msg = f"{agora} | {func.__name__} | usuario: {usuario['nome']} | valor: R$ {valor:.2f}"
+        log_msg = f"{agora} | {func.__name__} | usuario: {usuario.titular} | valor: R$ {valor:.2f}"
         logs.append(log_msg)
         with open(ARQUIVO_LOGS, "a", encoding="utf-8") as arquivo:
             arquivo.write(log_msg + "\n")
-        return resultado
-
-    return wrapper
-
-
-# atualizar informações do usuario
-def atualizar_usuarios(atualização):
-    @wraps(atualização)
-    def wrapper(*args, **kwargs):
-        usuario = args[0]
-        from funcoes import salvar_usuarios
-
-        usuario.setdefault("saldo", 0.0)
-        usuario.setdefault("depositos", 0)
-        usuario.setdefault("saques", 0)
-        usuario.setdefault("historico", [])
-
-        resultado = atualização(*args, **kwargs)
-
-        salvar_usuarios([usuario])
-
         return resultado
 
     return wrapper

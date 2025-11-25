@@ -1,53 +1,38 @@
-from funcoes import (
-    deposito,
-    saque,
-    extrato,
-    sair,
-    cadastro_usuario,
-    busca_cpf,
-    mostrar_logs,
-    salvar_usuarios,
-    carregar_usuarios,
-)
+from classes import Banco
+from funcoes import mostrar_logs
 
-
-usuarios = carregar_usuarios()
+banco = Banco("Banco teste")
+banco.carregar_contas()
 
 print("Bem vindo ao nosso Banco!")
 while True:
 
     # Cadastro de usuario
 
-    usuario = {
-        "nome": "",
-        "data_nascimento": "",
-        "endereco": "",
-        "cpf": "",
-        "saldo": 0.0,
-        "depositos": 0,
-        "saques": 0,
-        "historico": [],
-    }
-    cadastro = input("Voce ja possui uma conta? (s/n): ")
+    cadastro = input("Voce ja possui uma conta? (s/n): ").lower()
 
     if cadastro == "n":
-        cadastro_usuario(usuarios)
-        salvar_usuarios(usuarios)
+        banco.criar_conta()
 
     # Busca de usuario
 
-    else:
-        usuario = busca_cpf(usuarios)
+    elif cadastro == "s":
+        usuario = banco.buscar_conta_por_CPF()
+
         if usuario is None:
-            print("Tente novamente ou cadastre-se.")
+            print("Conta não encontrada.")
+            print("Tente novamente ou cadastre-se. \n")
             continue
+        else:
+            print(f"Bem vindo, {usuario.titular}")
+    else:
+        print("Opção inválida.")
+        continue
 
     executando = True
     while executando:
 
         # Menu
-
-        print("Bem vindo, ", usuario["nome"])
         print("\n-------- Menu --------")
         print("Escolha a operacao que deseja realizar:")
         print("1 - Depositar")
@@ -62,18 +47,18 @@ while True:
 
         if operacao == "1":
             valor = float(input("Digite o valor que deseja depositar: "))
-            deposito(usuario, valor)
+            usuario.depositar(valor)
 
         # Saque
 
         elif operacao == "2":
             valor = float(input("Digite o valor que deseja sacar: "))
-            saque(usuario, valor)
+            usuario.sacar(valor)
 
         # Extrato
 
         elif operacao == "3":
-            extrato(usuario)
+            usuario.consultar_extrato()
 
         # logs
 
@@ -83,9 +68,6 @@ while True:
         # Sair
 
         elif operacao == "5":
-            executando = sair()
             break
         else:
             print("Operacao invalida. Por favor, escolha uma operacao valida.")
-
-input("\nPressione ENTER para sair...")
